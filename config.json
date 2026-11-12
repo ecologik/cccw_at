@@ -926,5 +926,12 @@
         }
       ]
     }
-  ]
+  ],
+  "summary": {
+    "table": "tbl3mCVAQJH98sbVD",
+    "name_field": "Pledge Name",
+    "count_field": "# of Pledges",
+    "last_date_field": "Last Pledge Date",
+    "timezone": "America/Indiana/Indianapolis"
+  }
 }

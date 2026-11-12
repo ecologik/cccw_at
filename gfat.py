@@ -76,6 +76,19 @@ class Airtable:
                 if not off: break
         return found
 
+    def all_records(self, table, fields):
+        recs, off = [], None
+        while True:
+            q = [('pageSize', 100)] + [('fields[]', f) for f in fields] + ([('offset', off)] if off else [])
+            d = self._req('GET', f'{self.root}/{table}?' + urllib.parse.urlencode(q))
+            recs += d['records']; off = d.get('offset')
+            if not off: return recs
+
+    def update(self, table, updates):
+        for i in range(0, len(updates), 10):
+            self._req('PATCH', f'{self.root}/{table}',
+                      {'records': [{'id': rid, 'fields': f} for rid, f in updates[i:i + 10]], 'typecast': True})
+
     def create(self, table, rows):
         made = 0
         for i in range(0, len(rows), 10):

@@ -6,6 +6,8 @@ GF entries newer than that, skip any Entry Id that is somehow already there, and
 Env: AIRTABLE_TOKEN, plus the GF key/secret env vars named per site in config.json.
 Usage: python3 sync.py [--dry-run] [--form NAME_OR_ID ...]"""
 import argparse, json, os, sys
+from datetime import datetime
+from zoneinfo import ZoneInfo
 from gfat import GF, Airtable, entry_value, to_airtable
 
 def main():
@@ -60,8 +62,42 @@ def main():
                 failures.append(label)
                 print(f'ERROR {label}: {ex}', file=sys.stderr)
 
+    if cfg.get('summary') and not args.form:
+        try:
+            refresh_summary(at, cfg, args.dry_run)
+        except Exception as ex:
+            failures.append('All Pledges summary')
+            print(f'ERROR All Pledges summary: {ex}', file=sys.stderr)
+
     print(f'Done. Added {total} record(s).' + (f' Failed: {failures}' if failures else ''))
     sys.exit(1 if failures else 0)
+
+def refresh_summary(at, cfg, dry_run):
+    """One row per pledge in the summary table: record count and latest Entry Date (local date)."""
+    sm = cfg['summary']; tz = ZoneInfo(sm.get('timezone', 'UTC'))
+    rows = {}
+    for site in cfg['sites']:
+        for f in site['forms']:
+            recs = at.all_records(f['airtable_table'], ['Entry Date'])
+            dates = [r['fields']['Entry Date'] for r in recs if r['fields'].get('Entry Date')]
+            last = max(dates) if dates else None
+            if last:
+                last = datetime.fromisoformat(last.replace('Z', '+00:00')).astimezone(tz).date().isoformat()
+            rows[f.get('summary_name', f['name'])] = {sm['count_field']: len(recs), sm['last_date_field']: last}
+    existing = at.all_records(sm['table'], [sm['name_field']])
+    by_name = {r['fields'].get(sm['name_field']): r['id'] for r in existing if r['fields'].get(sm['name_field'])}
+    blanks = [r['id'] for r in existing if not r['fields'].get(sm['name_field'])]
+    updates, creates = [], []
+    for name, vals in rows.items():
+        fields = {sm['name_field']: name, **vals}
+        if name in by_name: updates.append((by_name[name], fields))
+        elif blanks: updates.append((blanks.pop(0), fields))
+        else: creates.append(fields)
+    for name, vals in rows.items():
+        print(f"  summary: {name}: {vals[sm['count_field']]} pledges, last {vals[sm['last_date_field']]}")
+    if not dry_run:
+        at.update(sm['table'], updates)
+        if creates: at.create(sm['table'], creates)
 
 if __name__ == '__main__':
     main()

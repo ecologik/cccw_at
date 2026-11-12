@@ -18,6 +18,12 @@ Column mapping (Airtable column → GF entry key) lives in `config.json`. It was
 same entries from the API. Geocoder columns are rendered the same way the GF CSV export
 renders them. Entry Date is written as true UTC.
 
+## All Pledges summary
+
+After each run, the **All Pledges** table gets one row per pledge with its record count and
+last pledge date (Indiana local date). Rows are matched by Pledge Name, so you can add your own
+columns to that table freely. Settings are under `summary` in `config.json`.
+
 ## Secrets (repo Settings → Secrets and variables → Actions)
 
 | Name | What |
