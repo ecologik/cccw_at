@@ -1,0 +1,67 @@
+"""Nightly sync: copy new Gravity Forms pledge entries into Airtable.
+
+For each enabled form in config.json: find the highest Entry Id already in its Airtable table, fetch
+GF entries newer than that, skip any Entry Id that is somehow already there, and create the rest.
+
+Env: AIRTABLE_TOKEN, plus the GF key/secret env vars named per site in config.json.
+Usage: python3 sync.py [--dry-run] [--form NAME_OR_ID ...]"""
+import argparse, json, os, sys
+from gfat import GF, Airtable, entry_value, to_airtable
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument('--dry-run', action='store_true', help='show what would be added, write nothing')
+    ap.add_argument('--form', action='append', help='only these forms (name or id); repeatable')
+    args = ap.parse_args()
+
+    here = os.path.dirname(os.path.abspath(__file__))
+    cfg = json.load(open(os.path.join(here, 'config.json')))
+    at = Airtable(os.environ['AIRTABLE_TOKEN'], cfg['airtable_base'])
+    tables = {t['id']: t for t in at.schema()}
+    total, failures = 0, []
+
+    for site in cfg['sites']:
+        gf = GF(site['url'], os.environ[site['gf_key_env']], os.environ[site['gf_secret_env']])
+        for f in site['forms']:
+            if args.form:
+                if f['name'] not in args.form and str(f['form_id']) not in args.form: continue
+            elif not f.get('enabled', True):
+                continue
+            label = f"{site['name']} / {f['name']} (form {f['form_id']})"
+            try:
+                t = tables[f['airtable_table']]
+                types = {x['name']: x['type'] for x in t['fields']}
+                writable = {h: s for h, s in f['mapping'].items()
+                            if h in types and types[h] not in ('formula', 'rollup', 'lookup', 'autoNumber',
+                                                               'createdTime', 'lastModifiedTime', 'count')}
+                missing = sorted(set(f['mapping']) - set(types))
+                if missing: print(f'  note: {label}: columns not in Airtable, skipped: {missing}')
+
+                since = at.max_number(t['id'], 'Entry Id')
+                entries = gf.entries_newer_than(f['form_id'], since)
+                if entries:
+                    already = at.existing_values(t['id'], 'Entry Id', [e['id'] for e in entries])
+                    entries = [e for e in entries if int(e['id']) not in already]
+                rows = []
+                for e in entries:
+                    row = {}
+                    for h, spec in writable.items():
+                        v = to_airtable(entry_value(e, spec), types[h])
+                        if v is not None: row[h] = v
+                    rows.append(row)
+                if args.dry_run:
+                    print(f'{label}: last Entry Id {since}, would add {len(rows)}'
+                          + (f" (ids {entries[0]['id']}..{entries[-1]['id']})" if rows else ''))
+                else:
+                    made = at.create(t['id'], rows) if rows else 0
+                    total += made
+                    print(f'{label}: last Entry Id {since}, added {made}')
+            except Exception as ex:
+                failures.append(label)
+                print(f'ERROR {label}: {ex}', file=sys.stderr)
+
+    print(f'Done. Added {total} record(s).' + (f' Failed: {failures}' if failures else ''))
+    sys.exit(1 if failures else 0)
+
+if __name__ == '__main__':
+    main()

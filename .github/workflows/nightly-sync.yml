@@ -1,0 +1,27 @@
+name: Nightly pledge sync
+
+on:
+  schedule:
+    - cron: '0 7 * * *'   # 07:00 UTC = 2-3am in Indiana
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (write nothing)'
+        type: boolean
+        default: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Sync Gravity Forms pledges to Airtable
+        env:
+          AIRTABLE_TOKEN: ${{ secrets.AIRTABLE_TOKEN }}
+          GF_KEY_INDIANA: ${{ secrets.GF_KEY_INDIANA }}
+          GF_SECRET_INDIANA: ${{ secrets.GF_SECRET_INDIANA }}
+        run: python sync.py ${{ inputs.dry_run && '--dry-run' || '' }}
