@@ -72,18 +72,34 @@ def main():
     print(f'Done. Added {total} record(s).' + (f' Failed: {failures}' if failures else ''))
     sys.exit(1 if failures else 0)
 
+def person_key(rec):
+    """Who pledged: email if given, else first + last name + address (or city). Same rule as the
+    Oct 2026 participation analysis."""
+    f = rec['fields']; norm = lambda k: ' '.join(str(f.get(k) or '').lower().split())
+    if norm('Email'): return 'e:' + norm('Email')
+    who = (norm('Name (First  Name)'), norm('Name (Last Name)'), norm('Address') or norm('City'))
+    return 'n:' + '|'.join(who) if any(who) else 'r:' + rec['id']
+
 def refresh_summary(at, cfg, dry_run):
     """One row per pledge in the summary table: record count and latest Entry Date (local date)."""
     sm = cfg['summary']; tz = ZoneInfo(sm.get('timezone', 'UTC'))
     rows = {}
     for site in cfg['sites']:
         for f in site['forms']:
-            recs = at.all_records(f['airtable_table'], ['Entry Date'])
+            recs = at.all_records(f['airtable_table'], ['Entry Date', 'Email', 'Name (First  Name)',
+                                                        'Name (Last Name)', 'Address', 'City'])
             dates = [r['fields']['Entry Date'] for r in recs if r['fields'].get('Entry Date')]
             last = max(dates) if dates else None
             if last:
                 last = datetime.fromisoformat(last.replace('Z', '+00:00')).astimezone(tz).date().isoformat()
-            rows[f.get('summary_name', f['name'])] = {sm['count_field']: len(recs), sm['last_date_field']: last}
+            vals = {sm['count_field']: len(recs), sm['last_date_field']: last}
+            if sm.get('unique_field'):
+                vals[sm['unique_field']] = len({person_key(r) for r in recs})
+            rows[f.get('summary_name', f['name'])] = vals
+    have = {x['name'] for t in at.schema() if t['id'] == sm['table'] for x in t['fields']}
+    if sm.get('unique_field') and sm['unique_field'] not in have:
+        print(f"  note: add a number field '{sm['unique_field']}' to the summary table to store unique counts")
+        for v in rows.values(): v.pop(sm['unique_field'], None)
     existing = at.all_records(sm['table'], [sm['name_field']])
     by_name = {r['fields'].get(sm['name_field']): r['id'] for r in existing if r['fields'].get(sm['name_field'])}
     blanks = [r['id'] for r in existing if not r['fields'].get(sm['name_field'])]
@@ -94,7 +110,7 @@ def refresh_summary(at, cfg, dry_run):
         elif blanks: updates.append((blanks.pop(0), fields))
         else: creates.append(fields)
     for name, vals in rows.items():
-        print(f"  summary: {name}: {vals[sm['count_field']]} pledges, last {vals[sm['last_date_field']]}")
+        print(f"  summary: {name}: {vals}")
     if not dry_run:
         at.update(sm['table'], updates)
         if creates: at.create(sm['table'], creates)

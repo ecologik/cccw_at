@@ -932,6 +932,7 @@
     "name_field": "Pledge Name",
     "count_field": "# of Pledges",
     "last_date_field": "Last Pledge Date",
-    "timezone": "America/Indiana/Indianapolis"
+    "timezone": "America/Indiana/Indianapolis",
+    "unique_field": "Unique Pledgers"
   }
 }
