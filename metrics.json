@@ -40,53 +40,53 @@
    ],
    [
     "Low Flow Shower Heads",
-    "sum",
-    "104"
+    "formula",
+    "f('104') if f('104') <= 10 else 0"
    ],
    [
     "Low Flow Shower Heads Gallons Saved",
-    "sum",
-    "122"
+    "formula",
+    "f('122') if f('104') <= 10 else 0"
    ],
    [
     "Low Flow Faucets",
-    "sum",
-    "106"
+    "formula",
+    "f('106') if f('106') <= 10 else 0"
    ],
    [
     "Low Flow Faucets Gallons Saved",
-    "sum",
-    "123"
+    "formula",
+    "f('123') if f('106') <= 10 else 0"
    ],
    [
     "Low Flow Toilets",
-    "sum",
-    "108"
+    "formula",
+    "f('108') if f('108') <= 10 else 0"
    ],
    [
     "Low Flow Toilets Gallons Saved",
-    "sum",
-    "124"
+    "formula",
+    "f('124') if f('108') <= 10 else 0"
    ],
    [
     "Leaky Faucet Repair",
-    "sum",
-    "110"
+    "formula",
+    "f('110') if f('110') <= 10 else 0"
    ],
    [
     "Leaky Faucet Repair Gallons Saved",
-    "sum",
-    "125"
+    "formula",
+    "f('125') if f('110') <= 10 else 0"
    ],
    [
     "Leaky Toilet Repair",
-    "sum",
-    "112"
+    "formula",
+    "f('112') if f('112') <= 10 else 0"
    ],
    [
     "Leaky Toilet Repair Gallons Saved",
-    "sum",
-    "126"
+    "formula",
+    "f('126') if f('112') <= 10 else 0"
    ],
    [
     "Loads of Laundry",
@@ -110,8 +110,8 @@
    ],
    [
     "Total INDOOR",
-    "sum",
-    "117"
+    "formula",
+    "f('120') + f('121') + (f('122') if f('104') <= 10 else 0) + (f('123') if f('106') <= 10 else 0) + (f('124') if f('108') <= 10 else 0) + (f('125') if f('110') <= 10 else 0) + (f('126') if f('112') <= 10 else 0) + f('127') + f('128')"
    ]
   ]
  },
@@ -530,5 +530,6 @@
     "1 if f('65') else 0"
    ]
   ]
- }
+ },
+ "_caps": "Water Conservation INDOOR fixture counts (shower heads, faucets, toilets, leaky faucets, leaky toilets): entries over 10 are ignored, along with their gallons (Jon, 2026-11-16)."
 }
