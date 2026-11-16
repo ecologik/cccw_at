@@ -12,6 +12,8 @@ For each enabled form in `config.json`, `sync.py`:
 2. pulls Gravity Forms entries with a higher id (active entries only),
 3. skips any Entry Id already in Airtable, so re-running is safe,
 4. creates the rest. Select options are added automatically (`typecast`).
+5. removes Airtable records whose GF entry was trashed, marked spam or deleted (each one is
+   double-checked with GF first; more than 50 in one table is treated as a problem and skipped).
 
 Column mapping (Airtable column → GF entry key) lives in `config.json`. It was built by
 `tools/build_mapping.py`, which matched the columns of the first CSV import against the

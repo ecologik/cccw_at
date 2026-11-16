@@ -26,6 +26,24 @@ class GF:
     def form(self, form_id):
         return self.get(f'/forms/{form_id}')
 
+    def active_ids(self, form_id):
+        """All active entry ids for a form (ids only, cheap)."""
+        ids, page = set(), 1
+        while True:
+            d = self.get(f'/forms/{form_id}/entries', {'paging[page_size]': 500, 'paging[current_page]': page,
+                                                       '_field_ids': 'id'})
+            ids |= {int(e['id']) for e in d['entries']}
+            if len(d['entries']) < 500: return ids, int(d.get('total_count', len(ids)))
+            page += 1
+
+    def entry_status(self, entry_id):
+        """'active', 'trash', 'spam', or 'deleted' (gone for good)."""
+        try:
+            return self.get(f'/entries/{entry_id}', {'_field_ids': 'id,status'}).get('status', 'active')
+        except RuntimeError as ex:
+            if 'HTTP 404' in str(ex): return 'deleted'
+            raise
+
     def entries_newer_than(self, form_id, min_id, page_size=100):
         """Active entries with id > min_id, oldest first."""
         out, page = [], 1

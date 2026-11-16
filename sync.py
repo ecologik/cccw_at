@@ -52,13 +52,14 @@ def main():
                         v = to_airtable(entry_value(e, spec), types[h])
                         if v is not None: row[h] = v
                     rows.append(row)
+                removed = prune_removed(at, gf, f, t, args.dry_run)
                 if args.dry_run:
                     print(f'{label}: last Entry Id {since}, would add {len(rows)}'
                           + (f" (ids {entries[0]['id']}..{entries[-1]['id']})" if rows else ''))
                 else:
                     made = at.create(t['id'], rows) if rows else 0
                     total += made
-                    print(f'{label}: last Entry Id {since}, added {made}')
+                    print(f'{label}: last Entry Id {since}, added {made}, removed {removed}')
             except Exception as ex:
                 failures.append(label)
                 print(f'ERROR {label}: {ex}', file=sys.stderr)
@@ -90,6 +91,26 @@ def main():
 
     print(f'Done. Added {total} record(s).' + (f' Failed: {failures}' if failures else ''))
     sys.exit(1 if failures else 0)
+
+MAX_PRUNE = 50  # safety: never delete more than this many records from one table in one run
+
+def prune_removed(at, gf, f, t, dry_run):
+    """Delete Airtable records whose GF entry was trashed, marked spam, or deleted.
+    Each missing id is confirmed individually with GF before anything is removed."""
+    active, total = gf.active_ids(f['form_id'])
+    if not active or len(active) != total:
+        print(f"  note: {f['name']}: GF id list incomplete ({len(active)}/{total}); skipping cleanup"); return 0
+    recs = at.all_records(t['id'], ['Entry Id'])
+    missing = [(r['id'], int(r['fields']['Entry Id'])) for r in recs
+               if r['fields'].get('Entry Id') and int(r['fields']['Entry Id']) not in active]
+    if len(missing) > MAX_PRUNE:
+        print(f"  WARNING: {f['name']}: {len(missing)} records not active in GF (over {MAX_PRUNE}); not deleting, check by hand")
+        return 0
+    gone = [(rid, eid) for rid, eid in missing if gf.entry_status(eid) != 'active']
+    if gone:
+        print(f"  {f['name']}: {'would remove' if dry_run else 'removing'} {len(gone)} trashed/deleted: {[e for _, e in gone]}")
+        if not dry_run: at.delete(t['id'], [rid for rid, _ in gone])
+    return len(gone)
 
 def person_key(rec):
     """Who pledged: email if given, else first + last name + address (or city). Same rule as the
