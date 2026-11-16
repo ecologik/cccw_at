@@ -1,0 +1,534 @@
+{
+ "_doc": "Lisa's impact columns per pledge. kind: sum = sum of a GF field; count = number of entries with that checkbox ticked; diff = sum(a) - sum(b); acres = acreage field, else width*length/divisor(radio); per_entry = constant x entries where 'when' field is non-empty; formula = python expression over entry fields (f('id') -> float).",
+ "Pet Poo": {
+  "form": 1,
+  "metrics": [
+   [
+    "Number of Dogs",
+    "sum",
+    "4"
+   ],
+   [
+    "Bacteria Prevented",
+    "sum",
+    "22"
+   ]
+  ]
+ },
+ "Water Conservation - INDOOR": {
+  "form": 15,
+  "metrics": [
+   [
+    "Brush Teeth",
+    "count",
+    "118.1"
+   ],
+   [
+    "Brush Teeth Gallons Saved",
+    "sum",
+    "120"
+   ],
+   [
+    "Shorten Shower",
+    "sum",
+    "102"
+   ],
+   [
+    "Shorten Shower Gallons Saved",
+    "sum",
+    "121"
+   ],
+   [
+    "Low Flow Shower Heads",
+    "sum",
+    "104"
+   ],
+   [
+    "Low Flow Shower Heads Gallons Saved",
+    "sum",
+    "122"
+   ],
+   [
+    "Low Flow Faucets",
+    "sum",
+    "106"
+   ],
+   [
+    "Low Flow Faucets Gallons Saved",
+    "sum",
+    "123"
+   ],
+   [
+    "Low Flow Toilets",
+    "sum",
+    "108"
+   ],
+   [
+    "Low Flow Toilets Gallons Saved",
+    "sum",
+    "124"
+   ],
+   [
+    "Leaky Faucet Repair",
+    "sum",
+    "110"
+   ],
+   [
+    "Leaky Faucet Repair Gallons Saved",
+    "sum",
+    "125"
+   ],
+   [
+    "Leaky Toilet Repair",
+    "sum",
+    "112"
+   ],
+   [
+    "Leaky Toilet Repair Gallons Saved",
+    "sum",
+    "126"
+   ],
+   [
+    "Loads of Laundry",
+    "sum",
+    "114"
+   ],
+   [
+    "Loads of Laundry Gallons Saved",
+    "sum",
+    "127"
+   ],
+   [
+    "Loads of Dishes",
+    "sum",
+    "116"
+   ],
+   [
+    "Loads of Dishes Gallons Saved",
+    "sum",
+    "128"
+   ],
+   [
+    "Total INDOOR",
+    "sum",
+    "117"
+   ]
+  ]
+ },
+ "Water Conservation - OUTDOOR": {
+  "form": 15,
+  "metrics": [
+   [
+    "Not Water Lawn",
+    "count",
+    "129.1"
+   ],
+   [
+    "Not Water Lawn - Lawn Size (acres)",
+    "sum",
+    "144"
+   ],
+   [
+    "Not Water Lawn Gallons Saved",
+    "sum",
+    "145"
+   ],
+   [
+    "Water in Late Eve/Early Morn",
+    "count",
+    "132.1"
+   ],
+   [
+    "Late Eve/Early Morn - Lawn Size (acres)",
+    "sum",
+    "130"
+   ],
+   [
+    "Late Eve/Early Morn Gallons Saved",
+    "sum",
+    "131"
+   ],
+   [
+    "Not Water on Hot/Windy",
+    "count",
+    "133.1"
+   ],
+   [
+    "Hot/Windy - Lawn Size (acres)",
+    "sum",
+    "146"
+   ],
+   [
+    "Hot/Windy Gallons Saved",
+    "sum",
+    "147"
+   ],
+   [
+    "Stop Watering Late Summer",
+    "count",
+    "134.1"
+   ],
+   [
+    "Late Summer - Lawn Size (acres)",
+    "sum",
+    "148"
+   ],
+   [
+    "Late Summer Gallons Saved",
+    "sum",
+    "149"
+   ],
+   [
+    "Total OUTDOOR",
+    "sum",
+    "136"
+   ]
+  ]
+ },
+ "Native Plants": {
+  "form": 5,
+  "metrics": [
+   [
+    "Rain Garden Size (acres)",
+    "sum",
+    "49"
+   ],
+   [
+    "RG Sediment",
+    "sum",
+    "22"
+   ],
+   [
+    "RG Phosphorus",
+    "sum",
+    "43"
+   ],
+   [
+    "RG Nitrogen",
+    "sum",
+    "44"
+   ],
+   [
+    "RG Algae",
+    "sum",
+    "45"
+   ],
+   [
+    "Native Size (acres)",
+    "sum",
+    "62"
+   ],
+   [
+    "Native Sediment",
+    "sum",
+    "63"
+   ],
+   [
+    "Native Phosphorus",
+    "sum",
+    "64"
+   ],
+   [
+    "Native Nitrogen",
+    "sum",
+    "65"
+   ],
+   [
+    "Native Algae",
+    "sum",
+    "66"
+   ]
+  ]
+ },
+ "Lawns": {
+  "form": 16,
+  "metrics": [
+   [
+    "No Fert Lawn Size (acres)",
+    "sum",
+    "49"
+   ],
+   [
+    "No Fert Algae",
+    "sum",
+    "52"
+   ],
+   [
+    "No Fert Nitrogen",
+    "sum",
+    "53"
+   ],
+   [
+    "Less Fert Size (acres)",
+    "sum",
+    "59"
+   ],
+   [
+    "Less Fert Algae",
+    "sum",
+    "61"
+   ],
+   [
+    "Less Fert Nitrogen",
+    "sum",
+    "62"
+   ]
+  ]
+ },
+ "Trees": {
+  "form": 13,
+  "metrics": [
+   [
+    "Hardwood #",
+    "sum",
+    "4"
+   ],
+   [
+    "Evergreen #",
+    "sum",
+    "40"
+   ],
+   [
+    "Stormwater",
+    "sum",
+    "22"
+   ],
+   [
+    "CO2",
+    "sum",
+    "41"
+   ],
+   [
+    "Air Pollutants",
+    "sum",
+    "42"
+   ],
+   [
+    "Woodlot (acres)",
+    "sum",
+    "47"
+   ],
+   [
+    "Woodlot Stormwater",
+    "sum",
+    "53"
+   ],
+   [
+    "Woodlot CO2",
+    "sum",
+    "54"
+   ],
+   [
+    "Woodlot Air Pollutants",
+    "sum",
+    "55"
+   ]
+  ]
+ },
+ "Septics": {
+  "form": 17,
+  "metrics": [
+   [
+    "Untreated Wastewater",
+    "sum",
+    "22"
+   ]
+  ]
+ },
+ "Waterfowl": {
+  "form": 8,
+  "metrics": [
+   [
+    "Duck/Goose #",
+    "sum",
+    "40"
+   ],
+   [
+    "Phosphorus Reduced",
+    "sum",
+    "41"
+   ],
+   [
+    "Algae Prevented",
+    "sum",
+    "42"
+   ],
+   [
+    "Bacteria Prevented",
+    "formula",
+    "f('40')*27*1000000*3*20/100000000"
+   ]
+  ]
+ },
+ "Kids": {
+  "form": 7,
+  "metrics": [
+   [
+    "Number of Dogs",
+    "sum",
+    "45"
+   ],
+   [
+    "Bacteria Prevented",
+    "formula",
+    "f('45')*340*23000000*129*0.25/1000000000"
+   ],
+   [
+    "Shorten Shower (minutes)",
+    "sum",
+    "51"
+   ],
+   [
+    "Shorten Shower Gallons Saved",
+    "sum",
+    "63"
+   ]
+  ]
+ },
+ "Soils": {
+  "form": 6,
+  "metrics": [
+   [
+    "Cover Crop Size (acres)",
+    "acres",
+    [
+     "93",
+     "41",
+     "42",
+     "95"
+    ]
+   ],
+   [
+    "CC Sediment",
+    "sum",
+    "278"
+   ],
+   [
+    "CC Phosphorus",
+    "sum",
+    "283"
+   ],
+   [
+    "CC Nitrogen",
+    "diff",
+    [
+     "287",
+     "289"
+    ]
+   ],
+   [
+    "CC Algae",
+    "sum",
+    "291"
+   ],
+   [
+    "No Till Size (acres)",
+    "acres",
+    [
+     "94",
+     "60",
+     "61",
+     "111"
+    ]
+   ],
+   [
+    "No Till Sediment",
+    "sum",
+    "303"
+   ],
+   [
+    "No Till Phosphorus",
+    "sum",
+    "306"
+   ],
+   [
+    "No Till Nitrogen",
+    "diff",
+    [
+     "309",
+     "312"
+    ]
+   ],
+   [
+    "No Till Algae",
+    "sum",
+    "314"
+   ]
+  ]
+ },
+ "Litter": {
+  "form": 41,
+  "metrics": [
+   [
+    "Water Bottle # (per week)",
+    "sum",
+    "55"
+   ],
+   [
+    "Water Bottles Saved (per year)",
+    "formula",
+    "f('55')*52"
+   ],
+   [
+    "Plastic Bags # (per week)",
+    "sum",
+    "57"
+   ],
+   [
+    "Plastic Bags Saved (per year)",
+    "sum",
+    "58"
+   ]
+  ]
+ },
+ "Climate": {
+  "form": 44,
+  "metrics": [
+   [
+    "Public Trans Miles",
+    "sum",
+    "82"
+   ],
+   [
+    "Public Trans CO2 Saved",
+    "sum",
+    "83"
+   ],
+   [
+    "Bike Miles",
+    "sum",
+    "84"
+   ],
+   [
+    "Bike CO2 Saved",
+    "sum",
+    "85"
+   ],
+   [
+    "Dietary Number",
+    "sum",
+    "60"
+   ]
+  ]
+ },
+ "Storm Drains": {
+  "form": 47,
+  "metrics": [
+   [
+    "Drain Locations",
+    "formula",
+    "(1 if f('46') else 0) + (1 if f('74') else 0)"
+   ]
+  ]
+ },
+ "Streams": {
+  "form": 48,
+  "metrics": [
+   [
+    "Stream Locations",
+    "formula",
+    "1 if f('65') else 0"
+   ]
+  ]
+ }
+}
