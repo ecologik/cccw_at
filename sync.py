@@ -92,6 +92,7 @@ def main():
     print(f'Done. Added {total} record(s).' + (f' Failed: {failures}' if failures else ''))
     sys.exit(1 if failures else 0)
 
+ENTRY_CACHE = {}  # full GF entries per form, shared by impact + outliers in one run
 MAX_PRUNE = 50  # safety: never delete more than this many records from one table in one run
 
 def prune_removed(at, gf, f, t, dry_run):
@@ -160,7 +161,7 @@ def refresh_impact(at, gf, im, dry_run):
     t = next((t for t in at.schema() if t['name'] == im['table'] or t['id'] == im['table']), None)
     if not t:
         print(f"  note: no '{im['table']}' table in Airtable yet; impact totals skipped"); return
-    res = impact.compute(gf)
+    res = impact.compute(gf, cache=ENTRY_CACHE)
     want = {}
     for pledge, rows in res.items():
         for r in rows:
@@ -186,7 +187,7 @@ def refresh_outliers(at, gf, site_url, oc, dry_run):
     if not t:
         print(f"  note: no '{oc['table']}' table in Airtable yet; outliers skipped"); return
     cols = {f['name'] for f in t['fields']}
-    found = impact.find_outliers(gf, site_url)
+    found = impact.find_outliers(gf, site_url, cache=ENTRY_CACHE)
     want = {(o['Entry Id'], o['Field']): {k: v for k, v in o.items() if k in cols} for o in found}
     existing = at.all_records(t['id'], ['Entry Id', 'Field'])
     have = {(r['fields'].get('Entry Id'), r['fields'].get('Field')): r['id'] for r in existing}
