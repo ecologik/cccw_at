@@ -9,6 +9,7 @@ import argparse, json, os, sys
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from gfat import GF, Airtable, entry_value, to_airtable
+import impact
 
 def main():
     ap = argparse.ArgumentParser()
@@ -69,6 +70,15 @@ def main():
             failures.append('All Pledges summary')
             print(f'ERROR All Pledges summary: {ex}', file=sys.stderr)
 
+    if cfg.get('impact') and not args.form:
+        try:
+            site = cfg['sites'][0]
+            refresh_impact(at, GF(site['url'], os.environ[site['gf_key_env']], os.environ[site['gf_secret_env']]),
+                           cfg['impact'], args.dry_run)
+        except Exception as ex:
+            failures.append('Pledge Impact')
+            print(f'ERROR Pledge Impact: {ex}', file=sys.stderr)
+
     print(f'Done. Added {total} record(s).' + (f' Failed: {failures}' if failures else ''))
     sys.exit(1 if failures else 0)
 
@@ -114,6 +124,30 @@ def refresh_summary(at, cfg, dry_run):
     if not dry_run:
         at.update(sm['table'], updates)
         if creates: at.create(sm['table'], creates)
+
+def refresh_impact(at, gf, im, dry_run):
+    """One row per pledge + metric (metrics.json) with its total over all GF entries."""
+    t = next((t for t in at.schema() if t['name'] == im['table'] or t['id'] == im['table']), None)
+    if not t:
+        print(f"  note: no '{im['table']}' table in Airtable yet; impact totals skipped"); return
+    res = impact.compute(gf)
+    want = {}
+    for pledge, rows in res.items():
+        for r in rows:
+            want[(pledge, r['metric'])] = {im['pledge_field']: pledge, im['metric_field']: r['metric'],
+                                           im['total_field']: round(r['total'], 2), im['entries_field']: r['entries']}
+    existing = at.all_records(t['id'], [im['pledge_field'], im['metric_field']])
+    have = {(r['fields'].get(im['pledge_field']), r['fields'].get(im['metric_field'])): r['id'] for r in existing}
+    blanks = [r['id'] for r in existing if not r['fields'].get(im['pledge_field'])]
+    updates, creates = [], []
+    for k, fields in want.items():
+        if k in have: updates.append((have[k], fields))
+        elif blanks: updates.append((blanks.pop(0), fields))
+        else: creates.append(fields)
+    print(f'  impact: {len(want)} metrics ({len(updates)} update, {len(creates)} new)')
+    if not dry_run:
+        at.update(t['id'], updates)
+        if creates: at.create(t['id'], creates)
 
 if __name__ == '__main__':
     main()

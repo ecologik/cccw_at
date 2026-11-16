@@ -24,6 +24,12 @@ After each run, the **All Pledges** table gets one row per pledge with its recor
 last pledge date (Indiana local date). Rows are matched by Pledge Name, so you can add your own
 columns to that table freely. Settings are under `summary` in `config.json`.
 
+## Pledge Impact table
+
+After each run, the **Pledge Impact** table gets one row per pledge + metric (Lisa's report
+columns) with the total across all Gravity Forms entries and how many entries contributed.
+Metrics are defined in `metrics.json` (computed by `impact.py`); add or change one there.
+
 ## Secrets (repo Settings → Secrets and variables → Actions)
 
 | Name | What |
