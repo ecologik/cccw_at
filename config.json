@@ -941,5 +941,8 @@
     "metric_field": "Metric",
     "total_field": "Total",
     "entries_field": "Entries"
+  },
+  "outliers": {
+    "table": "Outliers"
   }
 }

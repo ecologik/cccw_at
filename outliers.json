@@ -1,0 +1,161 @@
+{
+ "_doc": "Outlier rules: an entry is listed in the Outliers table when a field value is above max. Edit max to tune.",
+ "rules": [
+  [
+   15,
+   "104",
+   "Water: low-flow shower heads",
+   10
+  ],
+  [
+   15,
+   "106",
+   "Water: low-flow faucets",
+   10
+  ],
+  [
+   15,
+   "108",
+   "Water: low-flow toilets",
+   10
+  ],
+  [
+   15,
+   "110",
+   "Water: leaky faucets",
+   10
+  ],
+  [
+   15,
+   "112",
+   "Water: leaky toilets",
+   10
+  ],
+  [
+   15,
+   "114",
+   "Water: laundry loads per week",
+   50
+  ],
+  [
+   15,
+   "116",
+   "Water: dish loads per week",
+   50
+  ],
+  [
+   15,
+   "102",
+   "Water: shower minutes shortened",
+   30
+  ],
+  [
+   15,
+   "144",
+   "Water: lawn acres (not water lawn)",
+   10
+  ],
+  [
+   15,
+   "130",
+   "Water: lawn acres (late eve/early morn)",
+   10
+  ],
+  [
+   15,
+   "146",
+   "Water: lawn acres (hot/windy)",
+   10
+  ],
+  [
+   15,
+   "148",
+   "Water: lawn acres (late summer)",
+   10
+  ],
+  [
+   1,
+   "4",
+   "Pet Poo: dogs",
+   10
+  ],
+  [
+   7,
+   "45",
+   "Kids: dogs",
+   10
+  ],
+  [
+   7,
+   "51",
+   "Kids: shower minutes shortened",
+   30
+  ],
+  [
+   13,
+   "4",
+   "Tree: hardwood trees",
+   100
+  ],
+  [
+   13,
+   "40",
+   "Tree: evergreen trees",
+   100
+  ],
+  [
+   13,
+   "47",
+   "Tree: woodlot acres",
+   200
+  ],
+  [
+   5,
+   "49",
+   "Native Plants: rain garden acres",
+   10
+  ],
+  [
+   5,
+   "62",
+   "Native Plants: native planting acres",
+   10
+  ],
+  [
+   16,
+   "49",
+   "Lawn: no-fertilizer lawn acres",
+   10
+  ],
+  [
+   16,
+   "59",
+   "Lawn: less-fertilizer lawn acres",
+   10
+  ],
+  [
+   41,
+   "55",
+   "Litter: water bottles per week",
+   50
+  ],
+  [
+   41,
+   "57",
+   "Litter: plastic bags per week",
+   50
+  ],
+  [
+   44,
+   "82",
+   "Climate: public transit miles",
+   100
+  ],
+  [
+   44,
+   "84",
+   "Climate: bike miles",
+   100
+  ]
+ ]
+}

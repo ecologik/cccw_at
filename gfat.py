@@ -89,6 +89,11 @@ class Airtable:
             self._req('PATCH', f'{self.root}/{table}',
                       {'records': [{'id': rid, 'fields': f} for rid, f in updates[i:i + 10]], 'typecast': True})
 
+    def delete(self, table, ids):
+        for i in range(0, len(ids), 10):
+            q = urllib.parse.urlencode([('records[]', r) for r in ids[i:i + 10]])
+            self._req('DELETE', f'{self.root}/{table}?{q}')
+
     def create(self, table, rows):
         made = 0
         for i in range(0, len(rows), 10):

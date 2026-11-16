@@ -30,6 +30,12 @@ After each run, the **Pledge Impact** table gets one row per pledge + metric (Li
 columns) with the total across all Gravity Forms entries and how many entries contributed.
 Metrics are defined in `metrics.json` (computed by `impact.py`); add or change one there.
 
+## Outliers table
+
+After each run, the **Outliers** table lists every entry with a value above the limits in
+`outliers.json` (e.g. more than 10 leaky toilets, lawns over 10 acres), with a link to the entry
+in Gravity Forms. Once an entry is fixed or deleted in GF, its row disappears on the next run.
+
 ## Secrets (repo Settings → Secrets and variables → Actions)
 
 | Name | What |

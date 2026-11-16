@@ -39,3 +39,20 @@ def compute(gf, path=None):
                          'entries': len(nz), 'max': max(nz) if nz else 0})
         out[pledge] = rows
     return out
+
+
+def find_outliers(gf, site_url, path=None, cache=None):
+    """Entries with a field above its limit (outliers.json). One dict per entry + field."""
+    path = path or os.path.join(os.path.dirname(os.path.abspath(__file__)), 'outliers.json')
+    cache = {} if cache is None else cache
+    out = []
+    for form_id, field, label, limit in json.load(open(path))['rules']:
+        for e in cache.setdefault(form_id, all_entries(gf, form_id)):
+            v = _num(e.get(field))
+            if v > limit:
+                name = ' '.join(x for x in (e.get('1.3'), e.get('1.6')) if x)
+                out.append({'Pledge': label.split(':')[0], 'Field': label, 'Value': v, 'Limit': limit,
+                            'Entry Id': int(e['id']), 'Entry Date': e['date_created'].replace(' ', 'T') + 'Z',
+                            'Name': name, 'Email': e.get('2') or '',
+                            'GF Link': f"{site_url.rstrip('/')}/wp-admin/admin.php?page=gf_entries&view=entry&id={form_id}&lid={e['id']}"})
+    return out

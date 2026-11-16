@@ -79,6 +79,15 @@ def main():
             failures.append('Pledge Impact')
             print(f'ERROR Pledge Impact: {ex}', file=sys.stderr)
 
+    if cfg.get('outliers') and not args.form:
+        try:
+            site = cfg['sites'][0]
+            refresh_outliers(at, GF(site['url'], os.environ[site['gf_key_env']], os.environ[site['gf_secret_env']]),
+                             site['url'], cfg['outliers'], args.dry_run)
+        except Exception as ex:
+            failures.append('Outliers')
+            print(f'ERROR Outliers: {ex}', file=sys.stderr)
+
     print(f'Done. Added {total} record(s).' + (f' Failed: {failures}' if failures else ''))
     sys.exit(1 if failures else 0)
 
@@ -148,6 +157,26 @@ def refresh_impact(at, gf, im, dry_run):
     if not dry_run:
         at.update(t['id'], updates)
         if creates: at.create(t['id'], creates)
+
+def refresh_outliers(at, gf, site_url, oc, dry_run):
+    """Keep the Outliers table equal to the current list of flagged entries (outliers.json).
+    Rows whose entry was fixed or deleted in Gravity Forms are removed."""
+    t = next((t for t in at.schema() if t['name'] == oc['table'] or t['id'] == oc['table']), None)
+    if not t:
+        print(f"  note: no '{oc['table']}' table in Airtable yet; outliers skipped"); return
+    cols = {f['name'] for f in t['fields']}
+    found = impact.find_outliers(gf, site_url)
+    want = {(o['Entry Id'], o['Field']): {k: v for k, v in o.items() if k in cols} for o in found}
+    existing = at.all_records(t['id'], ['Entry Id', 'Field'])
+    have = {(r['fields'].get('Entry Id'), r['fields'].get('Field')): r['id'] for r in existing}
+    stale = [rid for k, rid in have.items() if k not in want]
+    updates = [(have[k], f) for k, f in want.items() if k in have]
+    creates = [f for k, f in want.items() if k not in have]
+    print(f'  outliers: {len(want)} flagged ({len(creates)} new, {len(stale)} cleared)')
+    if not dry_run:
+        at.update(t['id'], updates)
+        if creates: at.create(t['id'], creates)
+        if stale: at.delete(t['id'], stale)
 
 if __name__ == '__main__':
     main()
